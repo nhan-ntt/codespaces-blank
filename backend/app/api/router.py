@@ -11,5 +11,5 @@ router.include_router(api_playlist.router)
 router.include_router(api_genre.router)
 router.include_router(api_artist.router)
 router.include_router(api_song.router)
-router.include_router(algolia.router)
+# router.include_router(algolia.router)
 
