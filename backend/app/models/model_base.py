@@ -24,3 +24,8 @@ artist_song_association = Table('artist_song', BareBase.metadata,
                                 Column('artist_id', Integer, ForeignKey('artists.id')),
                                 Column('song_id', Integer, ForeignKey('songs.id'))
                                 )
+
+flashcard_word_association = Table('flashcard_word', BareBase.metadata,
+                                  Column('flashcard_id', Integer, ForeignKey('flashcards.id')),
+                                  Column('word_id', Integer, ForeignKey('words.id'))
+                                  )

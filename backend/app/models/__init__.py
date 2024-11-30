@@ -4,3 +4,5 @@ from .model_playlist import Playlist  # noqa
 from .model_song import Song  # noqa
 from .model_artist import Artist  # noqa
 from .model_genre import Genre  # noqa
+from .model_flashcard import Flashcard
+from .model_word import Word

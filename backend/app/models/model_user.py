@@ -15,4 +15,5 @@ class User(BareBase):
     image_link = Column(String, nullable=True)
 
     playlists = relationship('Playlist', back_populates='user')
+    flashcards = relationship('Flashcard', back_populates='user')
     favorite_songs = relationship('Song', secondary='user_song', back_populates='users')
