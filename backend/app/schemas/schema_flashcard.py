@@ -11,3 +11,9 @@ class FlashcardInfo(BaseModel):
         from_attributes = True
 
 
+class FlashcardUpdate(BaseModel):
+    name: str
+    description: str | None = None
+
+    class Config:
+        from_attributes = True

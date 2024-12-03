@@ -1,20 +1,29 @@
 from fastapi import APIRouter, HTTPException
 
 from database import db_dependency
-from schemas.schema_flashcard import FlashcardInfo
-from schemas.schema_word import WordInfo
+from schemas.schema_flashcard import FlashcardInfo, FlashcardUpdate
+from schemas.schema_word import WordInfo, WordUpdate
 from services import sv_flashcard
 from services.auth import user_dependency
 
 router = APIRouter(tags=["Flashcards"], prefix="/flashcard")
 
 
-@router.get("all/", response_model=dict[str, list[FlashcardInfo]])
-async def get_Flashcards(user: user_dependency, db: db_dependency) -> dict[str, list[FlashcardInfo]]:
+# @router.get("/all/", response_model=dict[str, list[FlashcardInfo]])
+# async def get_Flashcards(user: user_dependency, db: db_dependency) -> dict[str, list[FlashcardInfo]]:
+#     """
+#     API Read Flashcard
+#     """
+#     Flashcards = await sv_flashcard.read_Flashcard(db, user)
+#     return {"list": Flashcards}
+
+
+@router.get("/all/{user_id}", response_model=dict[str, list[FlashcardInfo]])
+async def get_Flashcards(user_id: int, db: db_dependency) -> dict[str, list[FlashcardInfo]]:
     """
     API Read Flashcard
     """
-    Flashcards = await sv_flashcard.read_Flashcard(db, user)
+    Flashcards = await sv_flashcard.read_Flashcard(db, user_id)
     return {"list": Flashcards}
 
 
@@ -30,7 +39,7 @@ async def get_Flashcard_by_id(Flashcard_id: int, db: db_dependency) -> Flashcard
 
 
 @router.post("", response_model=FlashcardInfo)
-async def create_Flashcard(Flashcard: FlashcardInfo, db: db_dependency, user: user_dependency) -> FlashcardInfo:
+async def create_Flashcard(Flashcard: FlashcardUpdate, db: db_dependency, user: user_dependency) -> FlashcardInfo:
     """
     API Create Flashcard
     """
@@ -54,16 +63,17 @@ async def get_words(Flashcard_id: int, db: db_dependency) -> dict[str, list[Word
     return {"list": words}
 
 
-@router.post("/{Flashcard_id}/words/{word_id}")
-async def add_word_to_Flashcard(Flashcard_id: int, word_id: int, db: db_dependency):
+
+@router.post("/{Flashcard_id}/words/")
+async def add_word_to_Flashcard(Flashcard_id: int, word: WordUpdate, db: db_dependency):
     """
     API Add word to Flashcard
     """
 
-    sv_flashcard.add_word_to_Flashcard(db, Flashcard_id, word_id)
+    sv_flashcard.add_word_to_flashcard(db, Flashcard_id, word)
     return {"message": "word added to Flashcard",
             "Flashcard_id": Flashcard_id,
-            "word_id": word_id}
+            }
 
 
 @router.delete("/{Flashcard_id}/words/{word_id}")

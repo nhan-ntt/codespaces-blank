@@ -12,4 +12,4 @@ class Flashcard(BareBase):
 
 
     user = relationship('User', back_populates='flashcards')
-    words = relationship('Word', secondary='flashcard_word', back_populates='flashcards')
+    words = relationship('Word', back_populates='flashcard')

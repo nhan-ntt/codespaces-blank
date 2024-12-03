@@ -10,5 +10,6 @@ class Word(BareBase):
     word = Column(String, index=True, nullable=False)
     meaning = Column(String, index=True, nullable=False)
     kanji = Column(String, index=True)
+    flashcard_id = Column(Integer, ForeignKey('flashcards.id'), nullable=False)
 
-    flashcards = relationship('Flashcard', secondary='flashcard_word', back_populates='words')
+    flashcard = relationship('Flashcard', back_populates='words')
