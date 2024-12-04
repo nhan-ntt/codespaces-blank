@@ -5,7 +5,7 @@ class WordInfo(BaseModel):
     id: int
     word: str 
     meaning: str 
-    playlist_id: str
+    flashcard_id: int
     kanji: str | None = None
 
     class Config:

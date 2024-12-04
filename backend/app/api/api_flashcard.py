@@ -5,6 +5,8 @@ from schemas.schema_flashcard import FlashcardInfo, FlashcardUpdate
 from schemas.schema_word import WordInfo, WordUpdate
 from services import sv_flashcard
 from services.auth import user_dependency
+from starlette import status
+
 
 router = APIRouter(tags=["Flashcards"], prefix="/flashcard")
 
@@ -38,13 +40,20 @@ async def get_Flashcard_by_id(Flashcard_id: int, db: db_dependency) -> Flashcard
     return Flashcard
 
 
-@router.post("", response_model=FlashcardInfo)
+@router.post("", response_model=FlashcardInfo, status_code=status.HTTP_201_CREATED)
 async def create_Flashcard(Flashcard: FlashcardUpdate, db: db_dependency, user_id: int) -> FlashcardInfo:
     """
     API Create Flashcard
     """
     return await sv_flashcard.create_Flashcard(db, user_id, Flashcard)
 
+
+@router.put("/{Flashcard_id}", response_model=FlashcardInfo)
+async def update_Flashcard(Flashcard_id: int, Flashcard: FlashcardUpdate, db: db_dependency) -> FlashcardInfo:
+    """
+    API Update Flashcard
+    """
+    return await sv_flashcard.udpate_flashcard(db, Flashcard_id, Flashcard)
 
 @router.delete("/{Flashcard_id}")
 async def delete_Flashcard(Flashcard_id: int, db: db_dependency) -> None:
@@ -54,34 +63,41 @@ async def delete_Flashcard(Flashcard_id: int, db: db_dependency) -> None:
     return await sv_flashcard.delete_Flashcard(db, Flashcard_id)
 
 
-@router.get("/{Flashcard_id}/words", response_model=dict[str, list[WordInfo]])
-async def get_words(Flashcard_id: int, db: db_dependency) -> dict[str, list[WordInfo]]:
+
+@router.get("/{flashcard_id}", response_model=dict[str, list[WordInfo]])
+async def get_words_of_flashcard(flashcard_id: int, db: db_dependency) -> dict[str, list[WordInfo]]:
     """
-    API Get words
+    API Read Flashcard
     """
-    words = await sv_flashcard.get_words(db, Flashcard_id)
+    words = await sv_flashcard.get_words(db, flashcard_id)
     return {"list": words}
 
 
 
-@router.post("/{Flashcard_id}/words/")
-async def add_word_to_Flashcard(Flashcard_id: int, word: WordUpdate, db: db_dependency):
+@router.post("/{Flashcard_id}/words/", response_model=WordInfo, status_code=status.HTTP_201_CREATED)
+async def add_word_to_Flashcard(db: db_dependency,Flashcard_id: int, word: WordUpdate) -> WordInfo:
     """
     API Add word to Flashcard
     """
 
-    sv_flashcard.add_word_to_flashcard(db, Flashcard_id, word)
-    return {"message": "word added to Flashcard",
-            "Flashcard_id": Flashcard_id,
-            }
+    return await sv_flashcard.add_word_to_flashcard(db, Flashcard_id, word)
 
 
-@router.delete("/{Flashcard_id}/words/{word_id}")
-async def remove_word_from_Flashcard(Flashcard_id: int, word_id: int, db: db_dependency):
+
+@router.put("/words/{word_id}", response_model=WordInfo)
+async def update_word(word_id: int, word: WordUpdate, db: db_dependency) -> WordInfo:
+    """
+    API Update word
+    """
+    return await sv_flashcard.update_word(db, word_id, word)
+
+
+
+@router.delete("/words/{word_id}")
+async def remove_word_from_Flashcard(word_id: int, db: db_dependency):
     """
     API Remove word from Flashcard
     """
-    sv_flashcard.remove_word_from_Flashcard(db, Flashcard_id, word_id)
+    sv_flashcard.remove_word_from_Flashcard(db, word_id)
     return {"message": "word removed from Flashcard",
-            "Flashcard_id": Flashcard_id,
             "word_id": word_id}
