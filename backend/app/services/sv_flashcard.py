@@ -26,10 +26,10 @@ async def read_Flashcard_by_id(db: db_dependency, Flashcard_id: int) -> Flashcar
 
 
 # create flashcard of user
-async def create_Flashcard(db: db_dependency, user: user_dependency, flashcard: FlashcardUpdate) -> FlashcardInfo:
+async def create_Flashcard(db: db_dependency, user_id: int, flashcard: FlashcardUpdate) -> FlashcardInfo:
     new_Flashcard = Flashcard(
         name=flashcard.name,
-        user_id=user.id,
+        user_id=user_id,
         description=flashcard.description
     )
     db.add(new_Flashcard)
@@ -38,11 +38,19 @@ async def create_Flashcard(db: db_dependency, user: user_dependency, flashcard: 
     return new_Flashcard
 
 
-async def delete_Flashcard(db: db_dependency, Flashcard_id: int):
-    Flashcard = db.query(Flashcard).filter(Flashcard.id == Flashcard_id).first()
-    db.delete(Flashcard)
+async def delete_Flashcard(db: db_dependency, Flashcard_id: int) -> None:
+    # Fetch and delete associated words
+    words = db.query(Word).filter(Word.flashcard_id == Flashcard_id).all()
+    for word in words:
+        db.delete(word)
+    
+    # Delete the flashcard
+    flashcard = db.query(Flashcard).filter(Flashcard.id == Flashcard_id).first()
+    if flashcard:
+        db.delete(flashcard)
+    
     db.commit()
-    return
+
 
 
 # get all words of flashcard id 

@@ -39,15 +39,15 @@ async def get_Flashcard_by_id(Flashcard_id: int, db: db_dependency) -> Flashcard
 
 
 @router.post("", response_model=FlashcardInfo)
-async def create_Flashcard(Flashcard: FlashcardUpdate, db: db_dependency, user: user_dependency) -> FlashcardInfo:
+async def create_Flashcard(Flashcard: FlashcardUpdate, db: db_dependency, user_id: int) -> FlashcardInfo:
     """
     API Create Flashcard
     """
-    return await sv_flashcard.create_Flashcard(db, user, Flashcard)
+    return await sv_flashcard.create_Flashcard(db, user_id, Flashcard)
 
 
 @router.delete("/{Flashcard_id}")
-async def delete_Flashcard(Flashcard_id: int, db: db_dependency, user: user_dependency) -> None:
+async def delete_Flashcard(Flashcard_id: int, db: db_dependency) -> None:
     """
     API Delete Flashcard
     """
